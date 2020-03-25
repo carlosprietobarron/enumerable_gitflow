@@ -53,6 +53,28 @@ module Enumerable
         end
       end
 
+      def my_any?
+        if block_given?
+          retValue = true
+          i = 0
+          length.times do
+            return true if yield(self[i])
+            retValue = false unless yield(self[i])
+            i += 1
+          end
+          retValue
+        else
+          i = 0
+          length.times do
+            return true if self[i]
+    
+            retValue = false
+            i += 1
+          end
+        end
+        retValue
+      end
+
 end
 
 
@@ -77,3 +99,12 @@ puts 'myall no block'
 puts array_str.my_all?
 array_str3 = ['hola', 'adios', false, 'valida']
 puts array_str3.my_all?
+
+puts 'myany'
+puts array_str.my_any? { |i| i =~ /^[0-9]+$/ }
+array_str2 = %w[hola adios valida]
+puts array_str2.my_any? { |i| i =~ /^[0-9]+$/ }
+puts 'myany no block'
+puts array_str.my_any?
+array_str4 = [false, nil, 'hola', 'adios', 'valida']
+puts array_str4.my_any?
