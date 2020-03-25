@@ -75,6 +75,29 @@ module Enumerable
         retValue
       end
 
+      def my_none?
+        if block_given?
+          retValue = false
+          i = 0
+          length.times do
+            return false if yield(self[i])
+    
+            retValue = true unless yield(self[i])
+            i += 1
+          end
+          retValue
+        else
+          i = 0
+          length.times do
+            return false if self[i]
+    
+            retValue = true
+            i += 1
+          end
+        end
+        retValue
+      end
+
 end
 
 
@@ -108,3 +131,14 @@ puts 'myany no block'
 puts array_str.my_any?
 array_str4 = [false, nil, 'hola', 'adios', 'valida']
 puts array_str4.my_any?
+
+print 'mynone '
+puts array_str.inspect
+puts array_str.my_none? { |i| i =~ /^[0-9]+$/ }
+array_str2 = %w[hola adios valida]
+puts array_str2.my_none? { |i| i =~ /^[0-9]+$/ }
+puts 'mynone no block'
+puts array_str.my_none?
+array_str4 = [false, nil, 'hola', 'adios', 'valida']
+puts array_str4.my_none?
+puts [nil, false, false, nil].my_none?
