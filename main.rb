@@ -137,4 +137,41 @@ module Enumerable
           return arr_ret
         end
       end
+
+      def my_map_proc(&proces)
+        i=0
+        arr=[]
+        if !proces.nil?
+          length.times do
+            arr<<proces.call(self[i])
+            i+=1
+          end
+          return arr
+        end
+        if block_given?
+          length.times do
+            arr<<yield(self[i])
+            i+=1
+          end
+          return arr
+        end
+      end
+
+      def my_inject
+        if block_given?
+           num=0
+           i=0
+           (length-1).times do
+             num=yield(self[i],self[i+1]) if i==0
+             num=yield(num,self[i+1]) if i>0
+             i+=1
+           end
+        end
+        num
+      end
+      
+      def multiply_els(arr=[])
+        puts arr.inspect
+        return arr.my_inject {|i,n| i * n}
+      end
 end
