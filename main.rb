@@ -122,5 +122,19 @@ module Enumerable
           counter
         end
       end
-    
+
+      def my_map
+        arr_ret=[]
+        if block_given?
+          i=0
+          length.times do
+            arr_ret.push(yield(self[i]))
+            #puts arr_ret.inspect
+            i+=1
+          end
+          return arr_ret
+        else
+          return arr_ret
+        end
+      end
 end
