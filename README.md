@@ -1,7 +1,6 @@
-# BUBBLE SORT Ruby project
+# ENUMERABLE Ruby project
 
-> This is the first project on the ruby curriculum, it's a bobblu sort method and testing code.
-  
+> This is the first project on the ruby curriculum, it's an alternative Enumerable module.
 
 
 ## Built With
@@ -16,11 +15,7 @@
 - Github: [@carlosprietobarron](https://github.com/carlosprietobarron)
 - Twitter: [@CarlosA40795725](https://twitter.com/CarlosA40795725)
 
-👤 **Sebastian Gil Rodriguez**
 
-- Github: [@sebGilR](https://github.com/sebGilR)
-- Twitter: [@sebGilR](https://twitter.com/sebGilR)
-- Linkedin: [linkedin](https://www.linkedin.com/in/sebastiangilrodriguez)
 
 ## 🤝 Contributing
 
