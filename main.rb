@@ -98,4 +98,29 @@ module Enumerable
         retValue
       end
 
+      def my_count(p = nil)
+        counter = 0
+        i = 0
+        #puts "param #{p}"
+        if block_given?
+          length.times do
+            #puts 'block : ' + self[i].to_s + yield(self[i]).to_s
+            counter += 1 if yield(self[i])
+            i += 1
+          end
+          return counter
+        elsif !p.nil?
+          #puts 'param ' + p.to_s
+          length.times do
+            #puts 'param : ' + p.to_s + self[i].to_s
+            counter += 1 if self[i] == p
+            i += 1
+          end
+          return counter
+        else
+          counter += length
+          counter
+        end
+      end
+    
 end
