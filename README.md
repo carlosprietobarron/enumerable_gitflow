@@ -10,7 +10,7 @@
 
 ## Authors
 
-👤 **Carlos Prieto Barrón**
+👤 **Carlos Alberto Prieto Barrón**
 
 - Github: [@carlosprietobarron](https://github.com/carlosprietobarron)
 - Twitter: [@CarlosA40795725](https://twitter.com/CarlosA40795725)
