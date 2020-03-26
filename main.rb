@@ -1,5 +1,9 @@
+# rubocop:disable Metrics/MethodLength,Metrics/ModuleLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+
 module Enumerable
   def my_each
+    return to_enum unless block_given?
+
     i = 0
     length.times do
       yield (self[i])
@@ -8,6 +12,8 @@ module Enumerable
   end
 
   def my_each_with_index
+    return to_enum unless block_given?
+
     i = 0
     length.times do
       yield(self[i], i)
@@ -16,134 +22,158 @@ module Enumerable
   end
 
   def my_select
-    if block_given?
-      arr_ret = []
-      i = 0
-      length.times do
-        arr_ret.push(self[i]) if yield(self[i])
-        i += 1
-      end
-      arr_ret
+    return to_enum unless block_given?
+
+    arr_ret = []
+    i = 0
+    length.times do
+      arr_ret.push(self[i]) if yield(self[i])
+      i += 1
     end
+    arr_ret
   end
 
-  def my_all?
+  def my_all?(par = nil)
+    ret_value = true
+
     if block_given?
-      # arr_ret=[]
-      retValue = true
       i = 0
       length.times do
-        if yield(self[i])
-          retValue = true
-        else
-          return false
-        end
+        return false unless yield(self[i])
+
         i += 1
       end
-      retValue
-    else
+    elsif !par
       i = 0
-      # puts 'no block here'
-      retValue = true
       length.times do
         return false unless self[i]
 
         i += 1
       end
-      retValue
+    else
+      if par.is_a? Regexp
+        my_each { |x| ret_value = false unless x =~ par }
+        return ret_value
+      end
+      if par.is_a? Class
+        my_each { |x| ret_value = false unless x.is_a?(par) }
+        return ret_value
+      end
+      unless par.nil?
+        my_each { |x| ret_value = false unless x == par }
+      end
     end
+    ret_value
   end
 
-  def my_any?
+  def my_any?(par = nil)
+    ret_value = false
     if block_given?
-      retValue = true
       i = 0
       length.times do
         return true if yield(self[i])
 
-        retValue = false unless yield(self[i])
         i += 1
       end
-      retValue
-    else
+    elsif !par
       i = 0
       length.times do
         return true if self[i]
 
-        retValue = false
         i += 1
       end
+    else
+      if par.is_a? Regexp
+        my_each { |x| ret_value = true if x =~ par }
+        return ret_value
+      end
+      if par.is_a? Class
+        my_each { |x| ret_value = true if x.is_a?(par) }
+        return ret_value
+      end
+      unless par.nil?
+        my_each { |x| ret_value = true if x == par }
+      end
     end
-    retValue
+    ret_value
   end
 
-  def my_none?
+  def my_none?(par = nil)
+    ret_value = true
     if block_given?
-      retValue = false
       i = 0
       length.times do
         return false if yield(self[i])
 
-        retValue = true unless yield(self[i])
         i += 1
       end
-      retValue
-    else
+    elsif !par
       i = 0
       length.times do
         return false if self[i]
 
-        retValue = true
         i += 1
       end
-    end
-    retValue
-  end
-
-  def my_count(p = nil)
-    counter = 0
-    i = 0
-    # puts "param #{p}"
-    if block_given?
-      length.times do
-        # puts 'block : ' + self[i].to_s + yield(self[i]).to_s
-        counter += 1 if yield(self[i])
-        i += 1
-      end
-      counter
-    elsif !p.nil?
-      # puts 'param ' + p.to_s
-      length.times do
-        # puts 'param : ' + p.to_s + self[i].to_s
-        counter += 1 if self[i] == p
-        i += 1
-      end
-      counter
     else
-      counter += length
-      counter
+      if par.is_a? Regexp
+        my_each { |x| ret_value = false if x =~ par }
+        return ret_value
+      end
+      if par.is_a? Class
+        my_each { |x| ret_value = false if x.is_a?(par) }
+        return ret_value
+      end
+      unless par.nil?
+        my_each { |x| ret_value = false if x == par }
+      end
     end
+    ret_value
   end
 
-  def my_map
-    arr_ret = []
+  def my_count(par = nil)
+    counter = 0
     if block_given?
       i = 0
       length.times do
-        arr_ret.push(yield(self[i]))
-        # puts arr_ret.inspect
+        counter += 1 unless yield(self[i]).nil?
         i += 1
       end
-      arr_ret
+    elsif !par
+      return length
     else
-      arr_ret
+      if par.is_a? Regexp
+        my_each { |x| counter += 1 if x =~ par }
+        return counter
+      end
+      if par.is_a? Class
+        my_each { |x| counter += 1 if x.is_a?(par) }
+        return counter
+      end
+      unless par.nil?
+        my_each { |x| counter += 1 if x == par }
+      end
     end
+    counter
   end
 
-  def my_map_proc(&proces)
+  def my_map
+    return to_enum unless block_given?
+
+    arr_ret = []
+    i = 0
+    length.times do
+      arr_ret.push(yield(self[i]))
+      i += 1
+    end
+    arr_ret
+  end
+
+  def my_map_proc(proces = nil)
     i = 0
     arr = []
     unless proces.nil?
+      return to_enum unless proces.is_a?(Proc)
+
       length.times do
         arr << proces.call(self[i])
         i += 1
@@ -151,29 +181,49 @@ module Enumerable
       return arr
     end
     if block_given?
+      i = 0
       length.times do
-        arr << yield(self[i])
+        arr.push(yield(self[i]))
         i += 1
       end
       arr
+    else
+      to_enum
     end
   end
 
-  def my_inject
+  def my_inject(arg1 = nil, arg2 = nil)
+    a = self
+    a = Array(self) if is_a? Range
+    op = ['+', '-', '*', '/', '%', '**'].freeze
+    if !arg1.nil? || !arg2.nil?
+      if !arg2.nil?
+        total = arg1
+        i = 0
+        symb = arg2.to_sym if op.include?(arg2.to_s)
+      elsif !arg1.nil?
+        total = first
+        i = 1
+        symb = arg1.to_sym if op.include?(arg1.to_s)
+      end
+      a.length.times do
+        total = total.send(symb, a[i]) if i <= a.length
+        i += 1
+      end
+      return total
+    end
     if block_given?
-      num = 0
-      i = 0
-      (length - 1).times do
-        num = yield(self[i], self[i + 1]) if i == 0
-        num = yield(num, self[i + 1]) if i > 0
+      total = first
+      i = 1
+      (a.length - 1).times do
+        total = yield(total, a[i]) if i < a.length
         i += 1
       end
     end
-    num
+    total
   end
+end
 
-  def multiply_els(arr = [])
-    puts arr.inspect
-    arr.my_inject { |i, n| i * n }
-  end
+def multiply_els(arr = [])
+  puts arr.my_inject { |i, n| i * n }
 end
