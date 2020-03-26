@@ -16,11 +16,6 @@
 - Github: [@carlosprietobarron](https://github.com/carlosprietobarron)
 - Twitter: [@CarlosA40795725](https://twitter.com/CarlosA40795725)
 
-👤 **Sebastian Gil Rodriguez**
-
-- Github: [@sebGilR](https://github.com/sebGilR)
-- Twitter: [@sebGilR](https://twitter.com/sebGilR)
-- Linkedin: [linkedin](https://www.linkedin.com/in/sebastiangilrodriguez)
 
 ## 🤝 Contributing
 
