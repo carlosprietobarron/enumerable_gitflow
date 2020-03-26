@@ -225,5 +225,8 @@ module Enumerable
 end
 
 def multiply_els(arr = [])
-  puts arr.my_inject { |i, n| i * n }
+  block = proc { |i, n| i * n }
+  puts arr.my_inject(&block)
 end
+
+# rubocop:enable Metrics/MethodLength,Metrics/ModuleLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
