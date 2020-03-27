@@ -135,7 +135,7 @@ module Enumerable
     if block_given?
       i = 0
       length.times do
-        counter += 1 unless yield(self[i]).nil?
+        counter += 1 if yield(self[i])
         i += 1
       end
     elsif !par
@@ -156,7 +156,7 @@ module Enumerable
     counter
   end
 
-  def my_map
+  def my_map_old
     return to_enum unless block_given?
 
     arr_ret = []
@@ -168,12 +168,12 @@ module Enumerable
     arr_ret
   end
 
-  def my_map_proc(proces = nil)
+  def my_map(proces = nil)
     i = 0
     arr = []
     unless proces.nil?
       return to_enum unless proces.is_a?(Proc)
-
+      p "proceas el proc"
       length.times do
         arr << proces.call(self[i])
         i += 1
@@ -196,32 +196,34 @@ module Enumerable
     a = self
     a = Array(self) if is_a? Range
     op = ['+', '-', '*', '/', '%', '**'].freeze
-    if !arg1.nil? || !arg2.nil?
-      if !arg2.nil?
-        total = arg1
-        i = 0
-        symb = arg2.to_sym if op.include?(arg2.to_s)
-      elsif !arg1.nil?
-        total = first
-        i = 1
-        symb = arg1.to_sym if op.include?(arg1.to_s)
-      end
-      a.length.times do
-        total = total.send(symb, a[i]) if i <= a.length
+    i=0
+    total=nil
+    loops=a.length
+    symb = arg2.to_sym if op.include?(arg2.to_s)
+    total = arg1 if arg1.is_a? Numeric
+    symb = arg1.to_sym if op.include?(arg1.to_s)
+    unless symb.nil?
+      i=1 if total.nil?
+      loops-=i 
+      total=first if total.nil?
+      loops.times do
+        total = total.send(symb, a[i]) if i < a.length
         i += 1
       end
       return total
     end
     if block_given?
-      total = first
-      i = 1
-      (a.length - 1).times do
+      i=1 if total.nil?
+      loops-=i 
+      total=first if total.nil?
+      loops.times do
         total = yield(total, a[i]) if i < a.length
         i += 1
       end
+      return total
     end
-    total
   end
+
 end
 
 def multiply_els(arr = [])
