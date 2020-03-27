@@ -228,7 +228,7 @@ end
 
 def multiply_els(arr = [])
   block = proc { |i, n| i * n }
-  puts arr.my_inject(&block)
+  return arr.my_inject(&block)
 end
 
 # rubocop:enable Metrics/MethodLength,Metrics/ModuleLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
